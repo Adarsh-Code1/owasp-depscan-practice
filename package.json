@@ -1,0 +1,12 @@
+{
+  "name": "owasp-depscan-practice",
+  "version": "1.0.0",
+  "description": "Practice project for OWASP dependency scanning",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
