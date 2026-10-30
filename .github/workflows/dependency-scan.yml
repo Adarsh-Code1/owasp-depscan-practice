@@ -28,6 +28,7 @@ jobs:
         run: |
           mkdir -p reports "$RUNNER_TEMP/dep-scan-vdb"
           chmod 777 "$RUNNER_TEMP/dep-scan-vdb"
+          chmod 777 "$GITHUB_WORKSPACE/reports"
 
           docker run --rm \
             -e VDB_HOME=/db \
