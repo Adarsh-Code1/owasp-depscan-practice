@@ -23,15 +23,18 @@ jobs:
 
       - name: Prepare report directory
         run: mkdir -p reports
-
+        
       - name: Run OWASP dep-scan
         run: |
+          mkdir -p reports "$RUNNER_TEMP/dep-scan-vdb"
+          chmod 777 "$RUNNER_TEMP/dep-scan-vdb"
+
           docker run --rm \
-            -v "$GITHUB_WORKSPACE:/app" \
-            -v "$RUNNER_TEMP/dep-scan-vdb:/db" \
             -e VDB_HOME=/db \
+            -v "$RUNNER_TEMP/dep-scan-vdb:/db" \
+            -v "$GITHUB_WORKSPACE:/app" \
             ghcr.io/owasp-dep-scan/dep-scan \
-            depscan --src /app --reports-dir /tmp/reports
+            depscan --src /app --reports-dir /app/reports
 
       - name: Upload security report
         if: always()
