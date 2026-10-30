@@ -1,38 +1,19 @@
-name: OWASP Dependency Scan
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
-jobs:
-  dependency-scan:
-    name: Scan dependencies
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Run OWASP dep-scan
         run: |
+          mkdir -p reports "$RUNNER_TEMP/dep-scan-vdb"
+
           docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e VDB_HOME=/db \
+            -v "$RUNNER_TEMP/dep-scan-vdb:/db" \
+            -v "$GITHUB_WORKSPACE:/app" \
+            ghcr.io/owasp-dep-scan/dep-scan \
+            depscan-vdb download --scope app
+
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e VDB_HOME=/db \
+            -v "$RUNNER_TEMP/dep-scan-vdb:/db" \
             -v "$GITHUB_WORKSPACE:/app" \
             ghcr.io/owasp-dep-scan/dep-scan \
             depscan --src /app --reports-dir /app/reports
-
-      - name: Upload security report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: owasp-depscan-report
-          path: reports/
-          if-no-files-found: warn
-          retention-days: 7
